@@ -1,4 +1,76 @@
-# --- IMPORTS ---
+# Modify the plot_gene_correlation_graph function
+def plot_gene_correlation_graph(expression_df, selected_genes, corr_threshold, plot_threshold=None):
+    """
+    Generates and displays a gene-gene correlation graph.
+    - Nodes are the selected genes.
+    - Edges are based on Pearson Correlation Coefficient (PCC).
+    - Only a subset of genes and edges are plotted.
+    """
+    st.subheader("Gene-Gene Correlation Network (Subset)")
+    st.info("A subset of nodes and edges are displayed for clarity.")
+
+    # Use a different threshold for plotting to make the graph cleaner
+    if plot_threshold is None:
+        plot_threshold = corr_threshold
+
+    filtered_df = expression_df[selected_genes]
+    corr_matrix = filtered_df.corr(method='pearson')
+
+    # Build the graph
+    G = nx.Graph()
+    for gene in selected_genes:
+        G.add_node(gene)
+
+    edges_to_add = []
+    for i in range(len(selected_genes)):
+        for j in range(i + 1, len(selected_genes)):
+            gene1 = selected_genes[i]
+            gene2 = selected_genes[j]
+            correlation = corr_matrix.loc[gene1, gene2]
+            if abs(correlation) > plot_threshold:
+                edges_to_add.append((gene1, gene2, {'weight': correlation}))
+
+    G.add_edges_from(edges_to_add)
+
+    # Create a subgraph with a subset of nodes and edges
+    if len(G.nodes) > 10:  # Limit to 10 nodes for the subplot
+        sub_nodes = list(G.nodes)[:10]
+        G = G.subgraph(sub_nodes)
+
+    if len(G.edges) == 0:
+        st.warning("No correlations found above the plotting threshold. Try lowering the threshold or check your data.")
+        return
+
+    # Create figure and axis for plotting
+    fig, ax = plt.subplots(figsize=(10, 8))
+    pos = nx.circular_layout(G)
+
+    # Draw nodes and edges
+    nx.draw_networkx_nodes(G, pos, node_size=200, node_color='skyblue', ax=ax)
+    nx.draw_networkx_labels(G, pos, font_size=8, ax=ax)
+    nx.draw_networkx_edges(G, pos, edge_color='gray', alpha=0.6, ax=ax)
+
+    ax.set_title("Gene Correlation Graph (Subset, PCC > {})".format(plot_threshold))
+    st.pyplot(fig)# Modify the plot_integrated_gradients_scores function
+def plot_integrated_gradients_scores(genes, scores):
+    """
+    Generates and displays a bar chart of Integrated Gradient scores.
+    - Only the top 30 genes are plotted.
+    """
+    st.subheader("Integrated Gradients Feature Importance (Top 30)")
+    st.info(
+        "The bar chart shows the relative importance of the top 30 selected genes for the model's classification decisions.")
+
+    # Create a DataFrame for easy plotting
+    scores_df = pd.DataFrame({'Gene': genes, 'Score': scores})
+    scores_df = scores_df.sort_values(by='Score', ascending=False).head(30)  # Limit to top 30
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+    sns.barplot(x='Score', y='Gene', data=scores_df, ax=ax)
+    ax.set_title("Top 30 Gene Importance Scores")
+    ax.set_xlabel("Integrated Gradient Score")
+    ax.set_ylabel("Selected Genes")
+    st.pyplot(fig)# --- IMPORTS ---
 import streamlit as st
 import numpy as np
 import pandas as pd
@@ -28,14 +100,16 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 # --- UTILITY FUNCTIONS FOR STREAMLIT ---
 
+# Modify the plot_gene_correlation_graph function
 def plot_gene_correlation_graph(expression_df, selected_genes, corr_threshold, plot_threshold=None):
     """
     Generates and displays a gene-gene correlation graph.
     - Nodes are the selected genes.
     - Edges are based on Pearson Correlation Coefficient (PCC).
+    - Only a subset of genes and edges are plotted.
     """
-    st.subheader("Gene-Gene Correlation Network")
-    st.info("Nodes are the selected genes. Edges show strong correlations between them.")
+    st.subheader("Gene-Gene Correlation Network (Subset)")
+    st.info("A subset of nodes and edges are displayed for clarity.")
 
     # Use a different threshold for plotting to make the graph cleaner
     if plot_threshold is None:
@@ -60,6 +134,11 @@ def plot_gene_correlation_graph(expression_df, selected_genes, corr_threshold, p
 
     G.add_edges_from(edges_to_add)
 
+    # Create a subgraph with a subset of nodes and edges
+    if len(G.nodes) > 50:  # Limit to 10 nodes for the subplot
+        sub_nodes = list(G.nodes)[:50]
+        G = G.subgraph(sub_nodes)
+
     if len(G.edges) == 0:
         st.warning("No correlations found above the plotting threshold. Try lowering the threshold or check your data.")
         return
@@ -73,25 +152,27 @@ def plot_gene_correlation_graph(expression_df, selected_genes, corr_threshold, p
     nx.draw_networkx_labels(G, pos, font_size=8, ax=ax)
     nx.draw_networkx_edges(G, pos, edge_color='gray', alpha=0.6, ax=ax)
 
-    ax.set_title("Gene Correlation Graph (PCC > {})".format(plot_threshold))
+    ax.set_title("Gene Correlation Graph (Subset, PCC > {})".format(plot_threshold))
     st.pyplot(fig)
 
 
+# Modify the plot_integrated_gradients_scores function
 def plot_integrated_gradients_scores(genes, scores):
     """
     Generates and displays a bar chart of Integrated Gradient scores.
+    - Only the top 30 genes are plotted.
     """
-    st.subheader("Integrated Gradients Feature Importance")
+    st.subheader("Integrated Gradients Feature Importance (Top 30)")
     st.info(
-        "The bar chart shows the relative importance of each selected gene for the model's classification decisions.")
+        "The bar chart shows the relative importance of the top 30 selected genes for the model's classification decisions.")
 
     # Create a DataFrame for easy plotting
     scores_df = pd.DataFrame({'Gene': genes, 'Score': scores})
-    scores_df = scores_df.sort_values(by='Score', ascending=False)
+    scores_df = scores_df.sort_values(by='Score', ascending=False).head(30)  # Limit to top 30
 
     fig, ax = plt.subplots(figsize=(12, 6))
     sns.barplot(x='Score', y='Gene', data=scores_df, ax=ax)
-    ax.set_title("Gene Importance Scores")
+    ax.set_title("Top 30 Gene Importance Scores")
     ax.set_xlabel("Integrated Gradient Score")
     ax.set_ylabel("Selected Genes")
     st.pyplot(fig)
