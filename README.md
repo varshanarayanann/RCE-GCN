@@ -4,32 +4,6 @@
    :widths: 20 80
    :header-rows: 0
 
-   * - **Badges**
-     - .. (This section is a placeholder. You can generate and insert your own badges)
-       .. image:: https://img.shields.io/badge/python-3.8%2B-blue.svg
-          :alt: Python Version
-       .. image:: https://img.shields.io/badge/streamlit-running-brightgreen.svg
-          :alt: Streamlit
-       .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-          :alt: code style: black
-       .. image:: https://img.shields.io/badge/license-MIT-blue.svg
-          :alt: License
-
-   * - **Tests**
-     - .. (Placeholder for your CI/CD and code coverage badges)
-       .. image:: https://img.shields.io/badge/build-passing-brightgreen.svg
-          :alt: Build Status
-       .. image:: https://img.shields.io/badge/coverage-0%25-red.svg
-          :alt: Code Coverage
-
-   * - **License & DOI**
-     - .. (Placeholder for your project's license and Zenodo/DOI badge)
-       .. image:: https://img.shields.io/badge/license-MIT-blue.svg
-          :alt: License
-       .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.YOUR_DOI.svg
-          :alt: Zenodo DOI
-
----
 
 This project provides an interactive web application for cancer classification and the identification of differentially expressed genes from genomic data. It leverages a novel **RCE-GCN (Recursive Gene Elimination with Graph Convolutional Networks)** method, which uses Integrated Gradients to find the most important genetic markers driving disease classification.
 
