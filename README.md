@@ -1,46 +1,59 @@
-# Recursive Gene Elimination with Graph Convolutional Networks and Integrated Gradients for Disease Classification in RNA-seq Data
+# Recursive Gene Elimination with Graph Convolutional Networks (RCE-GCN)
 
-A web-based tool for cancer classification and differentially expressed gene identification from genomic data using the novel **RCE-GCN** method. This application provides an interactive interface for researchers and clinicians to analyze patient data, predict cancer status and type, and understand the key genetic markers driving the prediction.
+.. list-table::
+   :widths: 20 80
+   :header-rows: 0
 
-## Overview
+   * - **Badges**
+     - .. (This section is a placeholder. You can generate and insert your own badges)
+       .. image:: https://img.shields.io/badge/python-3.8%2B-blue.svg
+          :alt: Python Version
+       .. image:: https://img.shields.io/badge/streamlit-running-brightgreen.svg
+          :alt: Streamlit
+       .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+          :alt: code style: black
+       .. image:: https://img.shields.io/badge/license-MIT-blue.svg
+          :alt: License
 
-This project provides an interactive web application built with Streamlit that allows users to:
-1.  Upload their own tabular genomic data (e.g., gene expression levels for patients).
-2.  Analyze the data using our primary **RCE-GCN (Recursive Gene Elimination with Graph Convolutional Networks)** model.
-3.  Receive predictions on whether a patient has cancer and the specific type of cancer.
-4.  Identify the most important **differentially expressed genes** that the model used to make its classification.
-5.  Optionally explore the data using an alternative method, **GEM-GRAPH**, via the sidebar for comparative analysis.
+   * - **Tests**
+     - .. (Placeholder for your CI/CD and code coverage badges)
+       .. image:: https://img.shields.io/badge/build-passing-brightgreen.svg
+          :alt: Build Status
+       .. image:: https://img.shields.io/badge/coverage-0%25-red.svg
+          :alt: Code Coverage
 
-***
+   * - **License & DOI**
+     - .. (Placeholder for your project's license and Zenodo/DOI badge)
+       .. image:: https://img.shields.io/badge/license-MIT-blue.svg
+          :alt: License
+       .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.YOUR_DOI.svg
+          :alt: Zenodo DOI
 
-## Features
+---
 
-* **Interactive Web Interface**: A user-friendly app built with Streamlit for easy data upload and analysis.
-* **Primary RCE-GCN Method**: Leverages a powerful Graph Convolutional Network for high-accuracy predictions.
-* **Gene Identification**: Outputs a list of the key differentially expressed genes.
-* **Alternative GEM-GRAPH Method**: Includes an additional model for exploratory analysis and comparison.
+This project provides an interactive web application for cancer classification and the identification of differentially expressed genes from genomic data. It leverages a novel **RCE-GCN (Recursive Gene Elimination with Graph Convolutional Networks)** method, which uses Integrated Gradients to find the most important genetic markers driving disease classification.
 
-***
+The application provides two main workflows:
 
-## Getting Started
+1.  **Primary RCE-GCN Method**: The main page (`RCE-GCN.py`) runs the full recursive gene elimination pipeline to identify a minimal, high-performance set of genes.
+2.  **Alternative GEM-GRAPH Method**: An exploratory, multi-step pipeline (in `pages/Explore Additional Method.py`) that allows users to:
+    * Upload and preprocess data.
+    * Apply feature selection (Boruta, PCA, etc.).
+    * Train a GCN model for classification.
+    * Compare GCN performance against baseline models (Random Forest, SVM, MLP, GMM).
 
-Follow these instructions to set up and run the application on your local machine.
+## Installation
 
-### Prerequisites
-
-* Python 3.8 or higher
-* `pip` and `venv`
-
-### Installation
+To install the necessary dependencies, you can clone the repository and use the `requirements.txt` file.
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/your-username/your-repository-name.git](https://github.com/your-username/your-repository-name.git)
-    cd your-repository-name
+    git clone [https://github.com/varshanarayanann/rce-gcn.git](https://github.com/varshanarayanann/rce-gcn.git)
+    cd rce-gcn
     ```
+   
 
 2.  **Create and activate a virtual environment:**
-
     * On macOS and Linux:
         ```bash
         python3 -m venv venv
@@ -51,14 +64,13 @@ Follow these instructions to set up and run the application on your local machin
         python -m venv venv
         .\venv\Scripts\activate
         ```
+   
 
 3.  **Install the required packages:**
-    Make sure your virtual environment is activated, then run:
     ```bash
     pip install -r requirements.txt
     ```
-
-***
+   
 
 ## How to Run the Application
 
@@ -70,9 +82,9 @@ Once the installation is complete, you can start the web application with a sing
     ```bash
     streamlit run RCE-GCN.py
     ```
-    Your web browser will automatically open a new tab with the running application.
+   
 
-***
+Your web browser will automatically open a new tab with the running application.
 
 ## Data Format
 
@@ -80,12 +92,12 @@ To use the application, your input data must be in a **tabular format** (e.g., a
 
 * **Rows**: Each row should represent a different patient or sample.
 * **Columns**: Each column should represent a different gene, with the values indicating the expression level.
-* It is recommended to have a column identifying the sample/patient ID.
+* A **Label Column** must be present (e.g., 'label') to identify the class for each sample.
 
-Here is a small example:
+**Example:**
 
-| PatientID | Gene_A | Gene_B | Gene_C | ... |
-| :-------- | :----- | :----- | :----- | :-- |
-| Patient_1 | 0.98   | 1.45   | 0.23   | ... |
-| Patient_2 | 1.12   | 0.88   | 0.56   | ... |
-| Patient_3 | 0.45   | 1.99   | 1.04   | ... |
+| PatientID | Gene_A | Gene_B | Gene_C | ... | label |
+| :--- | :--- | :--- | :--- | :-- | :--- |
+| Patient_1 | 0.98 | 1.45 | 0.23 | ... | 1 |
+| Patient_2 | 1.12 | 0.88 | 0.56 | ... | 0 |
+| Patient_3 | 0.45 | 1.99 | 1.04 | ... | 0 |
