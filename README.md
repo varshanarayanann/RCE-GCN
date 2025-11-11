@@ -1,8 +1,6 @@
 # Recursive Gene Elimination with Graph Convolutional Networks (RCE-GCN)
 
-.. list-table::
-   :widths: 20 80
-   :header-rows: 0
+<img width="273" height="312" alt="image" src="https://github.com/user-attachments/assets/88906eed-8ec4-4d2c-a4f8-47289b7d8ecb" />
 
 
 This project provides an interactive web application for cancer classification and the identification of differentially expressed genes from genomic data. It leverages a novel **RCE-GCN (Recursive Gene Elimination with Graph Convolutional Networks)** method, which uses Integrated Gradients to find the most important genetic markers driving disease classification.
