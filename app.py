@@ -12,7 +12,8 @@ from torch_geometric.utils import to_networkx
 from torch_geometric.data import Data
 from sklearn.metrics import classification_report
 import warnings
-
+import base64
+from pathlib import Path
 # Import core functions from the new pipeline module
 from pipeline import (
     set_seed,
@@ -195,26 +196,134 @@ def run_main_pipeline(_df, _seeds, _validation_seeds, corr_threshold, hidden_dim
     return None
 
 
-# --- STREAMLIT APP LAYOUT ---
+def load_base64_image(image_path):
+    img_bytes = Path(image_path).read_bytes()
+    encoded = base64.b64encode(img_bytes).decode()
+    return encoded
+
+logo_base64 = load_base64_image("assets/xu-logo2.png")
+
 
 st.set_page_config(
-    page_title="GNN-based Gene Selection",
+    page_title="RGE-GCN",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-st.title("GNN-based Gene Selection and Classification")
-st.markdown(
-    """
-    This application demonstrates a pipeline for selecting important genes from a dataset using a Graph Convolutional Network (GCN)
-    and Integrated Gradients, and then performing downstream classification on the reduced gene set.
-    """
+# Reduce top padding (optional but makes layout tight)
+st.markdown("""
+    <style>
+        .block-container {
+            padding-top: 2.8rem;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
 )
+
+# Display centered logo
+st.markdown(
+    f"""
+    <div style="text-align: center; margin-bottom: -10px;">
+        <img src="data:image/png;base64,{logo_base64}" width="140">
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# Center the title
+st.markdown(
+    "<h1 style='text-align: center;'>RGE-GCN: Recursive Gene Elimination with Graph Convolutional Networks</h1>",
+    unsafe_allow_html=True
+)
+
+
+st.markdown("""
+---
+
+### 🧬 What is RCE-GCN?
+
+**RCE-GCN (Recursive Gene Elimination with Graph Convolutional Networks)** is a genomic analysis framework that identifies the most informative genes for disease classification.
+
+This application allows you to:
+
+- Upload a patient-level gene expression dataset  
+- Automatically identify the **target column** (label) or manually select it  
+- Explore the dataset (first 10 rows or full dataset view)  
+- Visualize distributions for any gene column  
+- Run the full **RCE-GCN pipeline**, which includes:  
+  - Graph construction using Pearson correlation  
+  - GCN training with customizable hyperparameters  
+  - Integrated Gradients for gene importance  
+  - Recursive elimination of low-importance genes  
+  - Multi-seed evaluation for robustness  
+- View:
+  - Validation/Test accuracy  
+  - Final number of selected genes  
+  - Classification reports  
+  - Downloadable gene list  
+  - IG-based top-gene bar plot  
+  - Gene-gene correlation network  
+
+---
+
+### 🔍 Additional Methods (Experimental)
+
+Under **“Explore Additional Method”**, you can also try:
+
+- Boruta feature selection  
+- PCA dimensionality reduction  
+- Training a GCN using different embedding strategies  
+- Comparing performance with:  
+  - Random Forest  
+  - SVM  
+  - MLP  
+  - Gaussian Mixture Models  
+
+These methods were part of the research experiments for the RCE-GCN paper.
+
+---
+
+### 📂 Data Requirements
+
+Your input CSV must have:
+
+- **Rows = patients/samples**
+- **Columns = genes**
+- **One target column** (e.g., `label`, `target`, `y`)
+
+Example:
+
+| PatientID | Gene_A | Gene_B | Gene_C | ... | label |
+|-----------|--------|--------|--------|-----|--------|
+| Patient_1 | 0.98   | 1.45   | 0.23   | ... | 1 |
+| Patient_2 | 1.12   | 0.88   | 0.56   | ... | 0 |
+| Patient_3 | 0.45   | 1.99   | 1.04   | ... | 0 |
+
+---
+
+""")
 
 # Sidebar for controls and parameters
 with st.sidebar:
     st.header("1. Upload Data")
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+
+    st.markdown("---")
+    st.subheader("Developed By")
+
+    col_c, col_d = st.columns([1, 5])
+    with col_c:
+        st.image("https://cdn-icons-png.flaticon.com/512/25/25231.png", width=22)
+    with col_d:
+        st.markdown("[**Varsha Narayanan**](https://github.com/varshanarayanann)  [📧](mailto:vn299@njit.edu)")
+
+    col_a, col_b = st.columns([1, 5])
+    with col_a:
+        st.image("https://cdn-icons-png.flaticon.com/512/25/25231.png", width=22)  # GitHub icon
+    with col_b:
+        st.markdown("[**Shreyas Shende**](https://github.com/ShreyasShende3)  [📧](mailto:ss4897@njit.edu)")
+    st.markdown("---")
 
     if uploaded_file:
         st.header("2. Pipeline Parameters")
@@ -337,3 +446,12 @@ if uploaded_file:
 
 else:
     st.info("Please upload a CSV file to begin the analysis.")
+st.markdown(
+    """
+    <hr style="margin-top: 10px; margin-bottom: 10px;">
+    <div style="text-align: center; color: gray; font-size: 14px; padding: 0; margin: 0;">
+        © Xu Lab 2025
+    </div>
+    """,
+    unsafe_allow_html=True
+)
