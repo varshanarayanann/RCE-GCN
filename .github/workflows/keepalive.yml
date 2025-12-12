@@ -12,4 +12,4 @@ jobs:
     steps:
       - name: Send ping request to Streamlit app
         run: |
-          curl -I https://rce-gcn.streamlit.app/
+          curl -L --silent --show-error https://rce-gcn.streamlit.app/ > /dev/null
